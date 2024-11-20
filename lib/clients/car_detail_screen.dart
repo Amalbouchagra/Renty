@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:renty/clients/home.dart';
 
 class CarDetailScreen extends StatelessWidget {
   final String carName;
@@ -8,7 +9,7 @@ class CarDetailScreen extends StatelessWidget {
   // Constructor to accept carId, name, and price
   CarDetailScreen({
     required this.carName,
-    required this.carPrice,
+    required this.carPrice, required Car car,
   });
 
   @override

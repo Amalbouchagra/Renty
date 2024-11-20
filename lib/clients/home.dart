@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:renty/auth/login.dart';
 import 'package:renty/auth/signup.dart';
-import 'car_detail_screen.dart';
+import 'package:renty/clients/car_detail_screen.dart';
+
+
 
 // Define colors centrally to improve maintainability
 const Color primaryColor = Color.fromARGB(255, 41, 114, 255);
@@ -203,72 +205,137 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildCarList(List<Car> cars) {
-    return Column(
-      children: cars.map((car) {
-        return _buildCarCard(car);
-      }).toList(),
-    );
-  }
+  return GridView.builder(
+    shrinkWrap: true,
+    physics: NeverScrollableScrollPhysics(),
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      crossAxisSpacing: 8,
+      mainAxisSpacing: 8,
+      childAspectRatio: 1.2,
+    ),
+    itemCount: cars.length,
+    itemBuilder: (context, index) {
+      return _buildCarCard(cars[index]);
+    },
+  );
+}
 
-  Widget _buildCarCard(Car car) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      elevation: 5,
-      child: InkWell(
-        onTap: () {},
-        child: Container(
-          height: 150,
-          padding: EdgeInsets.all(16.0),
-          child: Row(
+ Widget _buildCarCard(Car car) {
+  return Card(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    elevation: 3,
+    child: InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CarDetailScreen(car: car, carName: '', carPrice: '',
+             
+             
+            ),
+          ),
+        );
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
                 child: Image.asset(
-                  car.image, // Using network image or asset path
-                  width: 120,
-                  height: 120,
+                  car.image,
+                  width: double.infinity,
+                  height: 100,
                   fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+              Positioned(
+                top: 8,
+                left: 8,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.orange,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    "Black Friday",
+                    style: TextStyle(color: whiteColor, fontSize: 10),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  car.name,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 4),
+                Row(
                   children: [
-                    Text(car.name,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                    SizedBox(height: 8),
                     Text(
-                      '${car.pricePerDay.toStringAsFixed(2)}',
+                      'AED ${car.pricePerDay.toStringAsFixed(2)}',
                       style: TextStyle(
-                          color: Colors.blueAccent,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14),
+                        color: Colors.redAccent,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      'AED ${(car.pricePerDay * 1.2).toStringAsFixed(2)}',
+                      style: TextStyle(
+                        color: greyColor,
+                        fontSize: 12,
+                        decoration: TextDecoration.lineThrough,
+                      ),
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      '-20%',
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
-              ),
-              Icon(Icons.arrow_forward, color: Colors.blueAccent),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
+
+
 
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
       items: [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explore'),
-        BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+        BottomNavigationBarItem(icon: Icon(Icons.home , color: Color.fromARGB(255, 20, 118, 247),), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.explore ,color: Color.fromARGB(255, 20, 118, 247)), label: 'Explore'),
+        BottomNavigationBarItem(icon: Icon(Icons.search ,color: Color.fromARGB(255, 20, 118, 247)), label: 'Search'),
         BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle), label: 'Profile'),
+            icon: Icon(Icons.account_circle ,color: Color.fromARGB(255, 20, 118, 247)), label: 'Profile'),
       ],
     );
   }
