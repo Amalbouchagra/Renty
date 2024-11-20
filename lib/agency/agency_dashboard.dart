@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:renty/agency/CarsListScreen.dart';
+import 'package:renty/clients/home.dart';
 import 'add_car_screen.dart';
 import 'add_car_screen.dart';
 import 'manage_reservations.dart';
@@ -25,6 +26,10 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
             ), // Icône de déconnexion
             tooltip: 'Logout', // Texte d'info-bulle
             onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Home()),
+                );
               // Action à exécuter lors du clic sur l'icône
               print('Logout pressed');
               // Ajoutez ici la logique pour gérer la déconnexion

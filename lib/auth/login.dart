@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:renty/agency/agency_dashboard.dart';
 import 'package:renty/auth/signup.dart';
 import 'package:renty/clients/styles/stylesauth.dart';
 
@@ -14,29 +15,35 @@ class _LoginPageState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
-  Future<void> _login() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+ Future<void> _login() async {
+  if (_formKey.currentState!.validate()) {
+    setState(() {
+      _isLoading = true;
+    });
 
-      try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _emailController.text,
-          password: _passwordController.text,
-        );
-        // Handle successful login (e.g., navigate to another screen)
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: ${e.toString()}')),
-        );
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      // Navigate to the AgencyDashboardScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => AgencyDashboardScreen()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login failed: ${e.toString()}')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
