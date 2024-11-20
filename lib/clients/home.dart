@@ -34,7 +34,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.white,
       appBar: _buildAppBar(),
       drawer: _buildDrawer(context),
       body: SingleChildScrollView(
@@ -141,7 +141,7 @@ class _HomeState extends State<Home> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12,
+            color: const Color.fromARGB(31, 176, 212, 247),
             blurRadius: 10,
             offset: Offset(0, 5),
           ),
@@ -225,6 +225,7 @@ class _HomeState extends State<Home> {
         borderRadius: BorderRadius.circular(12), // Coins arrondis
       ),
       elevation: 3,
+
       margin: EdgeInsets.symmetric(
           vertical: 8,
           horizontal: 10), // Réduit l'espacement autour de la carte

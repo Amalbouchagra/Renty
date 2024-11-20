@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:renty/clients/home.dart';
+import 'package:renty/clients/home.dart'; // Importation de la classe Car
+import 'package:renty/clients/reservation_screen.dart'; // Importation de la page de réservation
 
 class CarDetailScreen extends StatelessWidget {
-  final Car car;
+  final Car car; // Car est une classe que vous devez définir dans home.dart
 
   CarDetailScreen({required this.car});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(car.name)),
+      appBar: AppBar(
+          title:
+              Text(car.name)), // Affichage du nom de la voiture dans l'AppBar
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -42,34 +45,10 @@ class CarDetailScreen extends StatelessWidget {
             // Bouton de réservation
             ElevatedButton(
               onPressed: () {
-                // Action à effectuer lors de la réservation
-                // Par exemple, afficher une boîte de dialogue ou naviguer vers une page de confirmation
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text('Reservation Confirmation'),
-                    content: Text('Are you sure you want to reserve this car?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pop(); // Ferme la boîte de dialogue
-                        },
-                        child: Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          // Action pour réserver la voiture
-                          // Par exemple, naviguer vers la page de confirmation de réservation
-                          Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Car Reserved!')),
-                          );
-                        },
-                        child: Text('Reserve'),
-                      ),
-                    ],
-                  ),
+                // Naviguer vers ReservationScreen lorsque l'utilisateur clique sur le bouton
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ReservationScreen()),
                 );
               },
               child: Text('Reserve Now'),
