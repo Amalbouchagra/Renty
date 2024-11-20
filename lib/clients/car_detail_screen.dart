@@ -1,72 +1,88 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:renty/clients/home.dart';
 
 class CarDetailScreen extends StatelessWidget {
-  final String carName;
-  final String carPrice;
+  final Car car;
 
-  // Constructor to accept carId, name, and price
-  CarDetailScreen({
-    required this.carName,
-    required this.carPrice,
-  });
+  CarDetailScreen({required this.car});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Car Details'),
-        backgroundColor: Color.fromARGB(255, 41, 114, 255),
-      ),
-      body: FutureBuilder<DocumentSnapshot>(
-        future:
-            FirebaseFirestore.instance.collection('cars').doc(carName).get(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-
-          if (!snapshot.hasData || !snapshot.data!.exists) {
-            return Center(child: Text('Car not found'));
-          }
-
-          var car = snapshot.data!;
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Displaying car details
-                Text(
-                  'Car Name: ${car['name']}',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
-                Text('Model: ${car['model']}'),
-                Text('Registration Number: ${car['registrationNumber']}'),
-                Text('Year: ${car['year']}'),
-                Text('Mileage: ${car['mileage']} km'),
-                Text('Fuel Type: ${car['fuelType']}'),
-                Text('Transmission: ${car['transmission']}'),
-                Text('Engine Capacity: ${car['engineCapacity']} CC'),
-                Text('Price per Day: \$${car['pricePerDay']}'),
-                Text('Location: ${car['location']}'),
-                SizedBox(height: 20),
-                Text('Conditions: ${car['conditions']}'),
-                Text('Options: ${car['options']}'),
-                SizedBox(height: 20),
-                // Displaying car image if available
-                car['image'].isNotEmpty
-                    ? Image.network(car['image'])
-                    : SizedBox.shrink(),
-              ],
+      appBar: AppBar(title: Text(car.name)),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Affichage de l'image de la voiture
+            Image.asset(
+              car.image,
+              width: 800, // Largeur fixe
+              height: 300, // Hauteur fixe
+              fit: BoxFit.cover,
             ),
-          );
-        },
+            SizedBox(height: 10),
+            // Nom de la voiture
+            Text(
+              car.name,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            // Prix par jour
+            Text(
+              'AED ${car.pricePerDay.toStringAsFixed(2)} per day',
+              style: TextStyle(fontSize: 18, color: Colors.green),
+            ),
+            // Modèle de la voiture
+            Text(
+              car.model,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            // Bouton de réservation
+            ElevatedButton(
+              onPressed: () {
+                // Action à effectuer lors de la réservation
+                // Par exemple, afficher une boîte de dialogue ou naviguer vers une page de confirmation
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('Reservation Confirmation'),
+                    content: Text('Are you sure you want to reserve this car?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pop(); // Ferme la boîte de dialogue
+                        },
+                        child: Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // Action pour réserver la voiture
+                          // Par exemple, naviguer vers la page de confirmation de réservation
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Car Reserved!')),
+                          );
+                        },
+                        child: Text('Reserve'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: Text('Reserve Now'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue, // Couleur du bouton
+                padding: EdgeInsets.symmetric(
+                    vertical: 12, horizontal: 20), // Padding du bouton
+                textStyle:
+                    TextStyle(fontSize: 16), // Taille du texte dans le bouton
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

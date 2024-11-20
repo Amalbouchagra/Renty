@@ -16,6 +16,11 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
       appBar: AppBar(
         title: const Text('Agency Dashboard'),
         backgroundColor: const Color.fromARGB(255, 41, 114, 255),
+        titleTextStyle: TextStyle(
+          color: Colors.white, // Couleur du texte (ici blanc)
+          fontSize: 22, // Taille du texte
+          fontWeight: FontWeight.bold, // Poids du texte
+        ),
         elevation: 4,
         actions: [
           IconButton(

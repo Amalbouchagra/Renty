@@ -100,6 +100,11 @@ class _AddCarScreenState extends State<AddCarScreen> {
       appBar: AppBar(
         title: Text('Add Car'),
         backgroundColor: Color.fromARGB(255, 41, 114, 255),
+        titleTextStyle: TextStyle(
+          color: Colors.white, // Couleur du texte (ici blanc)
+          fontSize: 22, // Taille du texte
+          fontWeight: FontWeight.bold, // Poids du texte
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

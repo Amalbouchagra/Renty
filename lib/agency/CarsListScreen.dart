@@ -42,6 +42,11 @@ class CarListScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Car List'),
         backgroundColor: Color.fromARGB(255, 41, 114, 255),
+        titleTextStyle: TextStyle(
+          color: Colors.white, // Couleur du texte (ici blanc)
+          fontSize: 22, // Taille du texte
+          fontWeight: FontWeight.bold, // Poids du texte
+        ),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('cars').snapshots(),
