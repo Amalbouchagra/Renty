@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:renty/agency/AnalyticsScreen.dart';
 import 'package:renty/agency/CarsListScreen.dart';
 import 'package:renty/auth/logout.dart';
-import 'package:renty/clients/home.dart';
+
 import 'add_car_screen.dart';
-import 'add_car_screen.dart';
+
 import 'manage_reservations.dart';
 
 class AgencyDashboardScreen extends StatefulWidget {
@@ -27,19 +27,17 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
         elevation: 4,
         actions: [
           IconButton(
-              icon: const Icon(
-                Icons.logout,
-                color: Color.fromARGB(255, 102, 18, 18),
-              ), // Icône de déconnexion
-              tooltip: 'Logout', // Texte d'info-bulle
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LogoutScreen()),
-                );
-                // Action à exécuter lors du clic sur l'icône
-                print('Logout pressed');
-              }),
+            icon: Icon(
+              Icons.logout,
+              color: Color.fromARGB(255, 255, 255, 255),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LogoutScreen()),
+              );
+            },
+          ),
         ],
       ),
       body: Padding(

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:renty/admin/AdminDashboard.dart';
+import 'package:renty/agency/agency_dashboard.dart';
 import 'package:renty/auth/signup.dart';
-import 'package:renty/clients/styles/stylesauth.dart';
+import 'package:renty/clients/profile_client.dart';
+
+import 'package:renty/styles/stylesauth.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -21,11 +26,51 @@ class _LoginPageState extends State<Login> {
       });
 
       try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+        // Authenticate the user
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
-        // Handle successful login (e.g., navigate to another screen)
+
+        // Fetch the user's role from Firestore
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .get();
+
+        if (userDoc.exists) {
+          String role = userDoc['role'];
+
+          // Navigate based on role
+          if (role == 'User') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ClientDashboard(
+                        username: '',
+                      )),
+            );
+          } else if (role == 'Agency') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => AgencyDashboardScreen()),
+            );
+          } else if (role == 'Admin') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => AdminDashboard()),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Unknown role: $role'),
+            ));
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('No user data found'),
+          ));
+        }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Login failed: ${e.toString()}')),
@@ -51,7 +96,6 @@ class _LoginPageState extends State<Login> {
               SizedBox(height: 60), // Space for logo
               Image.asset(
                 'assets/logo.jpeg',
-                // width: 200,
                 height: 100,
               ),
               SizedBox(height: 20),

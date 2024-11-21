@@ -1,32 +1,51 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:renty/auth/login.dart'; // Assurez-vous que le chemin vers Login est correct
 
 class LogoutScreen extends StatelessWidget {
-  const LogoutScreen({Key? key}) : super(key: key);
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Fonction pour gérer la déconnexion
+  Future<void> _logout(BuildContext context) async {
+    try {
+      await _auth.signOut(); // Déconnexion avec Firebase
+      // Redirection vers l'écran de connexion
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => Login()),
+        (route) => false,
+      );
+    } catch (e) {
+      // Affichage d'une erreur en cas de problème
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de la déconnexion : $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Logout"),
+        title: Text('Déconnexion'),
+        backgroundColor: Colors.blueAccent,
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () async {
-            try {
-              // Perform logout
-              await FirebaseAuth.instance.signOut();
-
-              // After successful logout, navigate to the login screen
-              Navigator.pushReplacementNamed(context, 'Home');
-            } catch (e) {
-              // If an error occurs during sign out
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Error signing out: $e")),
-              );
-            }
-          },
-          child: Text("Logout"),
+        child: ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.redAccent,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          icon: Icon(Icons.logout, color: Colors.white),
+          label: Text(
+            'Se déconnecter',
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
+          onPressed: () =>
+              _logout(context), // Appel de la fonction de déconnexion
         ),
       ),
     );

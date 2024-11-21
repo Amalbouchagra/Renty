@@ -6,7 +6,6 @@ import 'package:renty/clients/car_detail_screen.dart';
 
 const Color primaryColor = Color.fromARGB(255, 41, 114, 255);
 const Color whiteColor = Colors.white;
-const Color greyColor = Colors.grey;
 
 class Home extends StatefulWidget {
   @override
@@ -15,18 +14,33 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  int _selectedIndex = 0; // Pour gérer l'onglet sélectionné
 
-  // Fetch all cars from Firebase without any filter
+  // Méthode pour naviguer entre les pages
+  void _onItemTapped(int index) {
+    if (index == 1) {
+      // Naviguer vers la page Login si "Start" est sélectionné
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Login()),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
+
+  // Récupérer les voitures depuis Firestore
   Future<List<Car>> _fetchCars() async {
     QuerySnapshot snapshot = await _firestore.collection('cars').get();
-
     return snapshot.docs.map((doc) {
       return Car(
         name: doc['name'],
         model: doc['model'],
         pricePerDay: double.parse(doc['pricePerDay'].toString()),
         image: doc['image'],
-        carId: doc.id, // Use car ID for fetching details later
+        carId: doc.id,
       );
     }).toList();
   }
@@ -34,9 +48,8 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: whiteColor,
       appBar: _buildAppBar(),
-      drawer: _buildDrawer(context),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -46,7 +59,11 @@ class _HomeState extends State<Home> {
             SizedBox(height: 20),
             _buildCategoryButtons(),
             SizedBox(height: 20),
-            _buildSectionTitle(""),
+            Text(
+              "Available Cars",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
             FutureBuilder<List<Car>>(
               future: _fetchCars(),
               builder: (context, snapshot) {
@@ -64,51 +81,29 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.explore),
+            label: 'Start',
+          ),
+        ],
+      ),
     );
   }
 
   AppBar _buildAppBar() {
     return AppBar(
       elevation: 0,
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-    );
-  }
-
-  Widget _buildDrawer(BuildContext context) {
-    return Drawer(
       backgroundColor: whiteColor,
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: primaryColor,
-            ),
-            child: Text(
-              'Renty Menu',
-              style: TextStyle(color: whiteColor, fontSize: 24),
-            ),
-          ),
-          _buildDrawerItem(
-              icon: Icons.login,
-              text: 'Login',
-              onTap: () {
-                _navigateTo(context, Login());
-              }),
-          _buildDrawerItem(
-              icon: Icons.person_add,
-              text: 'User Signup',
-              onTap: () {
-                _navigateTo(context, UserSignup());
-              }),
-          _buildDrawerItem(
-              icon: Icons.business_center,
-              text: 'Agency Signup',
-              onTap: () {
-                _navigateTo(context, AgencySignup());
-              }),
-        ],
-      ),
+      title: Text("", style: TextStyle(color: primaryColor)),
+      centerTitle: true,
     );
   }
 
@@ -116,26 +111,15 @@ class _HomeState extends State<Home> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
-  Widget _buildDrawerItem(
-      {required IconData icon,
-      required String text,
-      required GestureTapCallback onTap}) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(text),
-      onTap: onTap,
-    );
-  }
-
   Widget _buildSearchBox() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 255, 255, 255),
+        color: whiteColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: const Color.fromARGB(31, 12, 12, 12),
+            color: Colors.grey.withOpacity(0.2),
             blurRadius: 10,
             offset: Offset(0, 5),
           ),
@@ -152,47 +136,32 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildCategoryButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildCategoryButton("Luxury"),
-        _buildCategoryButton("Sport"),
-        _buildCategoryButton("SUV"),
-        _buildCategoryButton("Convertible"),
-        _buildCategoryButton("Business"),
-        _buildCategoryButton("Electric (EV)"),
-        _buildCategoryButton("VAN"),
-        _buildCategoryButton("Economy"),
-      ],
-    );
-  }
-
-  Widget _buildCategoryButton(String category) {
-    return Expanded(
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 5),
-        height: 40,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(
-            colors: [primaryColor, primaryColor.withOpacity(0.8)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: Text(category,
-              style: TextStyle(color: whiteColor, fontWeight: FontWeight.bold)),
-        ),
+    final categories = [
+      "Luxury",
+      "Sport",
+      "SUV",
+      "Convertible",
+      "Business",
+      "Electric (EV)",
+      "VAN",
+      "Economy"
+    ];
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: categories
+            .map((category) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child: Chip(
+                    backgroundColor: primaryColor,
+                    label: Text(
+                      category,
+                      style: TextStyle(color: whiteColor),
+                    ),
+                  ),
+                ))
+            .toList(),
       ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-          fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
     );
   }
 
@@ -201,10 +170,10 @@ class _HomeState extends State<Home> {
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Deux cartes par ligne
+        crossAxisCount: 2,
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
-        childAspectRatio: 0.85, // Rapport largeur/hauteur compact
+        childAspectRatio: 0.85,
       ),
       itemCount: cars.length,
       itemBuilder: (context, index) {
@@ -229,48 +198,30 @@ class _HomeState extends State<Home> {
           );
         },
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.network(
                 car.image,
+                height: 100,
                 width: double.infinity,
-                height: 150, // Hauteur réduite pour l'image
                 fit: BoxFit.cover,
               ),
             ),
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     car.name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.black87,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 4),
-                  Text(
-                    car.model,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                  ),
+                  Text(car.model, style: TextStyle(color: Colors.grey)),
                   SizedBox(height: 6),
                   Text(
                     'AED ${car.pricePerDay.toStringAsFixed(2)} / day',
-                    style: TextStyle(
-                      color: primaryColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(color: primaryColor),
                   ),
                 ],
               ),
@@ -288,10 +239,12 @@ class Car {
   final String image;
   final String carId;
   final String model;
-  Car(
-      {required this.name,
-      required this.pricePerDay,
-      required this.image,
-      required this.carId,
-      required this.model});
+
+  Car({
+    required this.name,
+    required this.pricePerDay,
+    required this.image,
+    required this.carId,
+    required this.model,
+  });
 }

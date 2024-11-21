@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: AgencyDashboardScreen(),
+        home: Home(),
         routes: {
           "signup": (context) => Signup(),
           "Login": (context) => Login(),
