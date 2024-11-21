@@ -17,7 +17,6 @@ class ManageReservationsScreen extends StatelessWidget {
           }
 
           final reservations = snapshot.data!.docs;
-
           return ListView.builder(
             itemCount: reservations.length,
             itemBuilder: (context, index) {

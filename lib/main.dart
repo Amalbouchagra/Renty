@@ -15,7 +15,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: const FirebaseOptions(
       apiKey: "AIzaSyCOTUIpOY-OHabR6qy94yqDkbBZXnYbm5g",
-      appId: "com.example.projet2",
+      appId: "com.example.renty",
       messagingSenderId: "626975763183",
       projectId: "renty-90dfc",
     ),
@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Home(),
+        home: AgencyDashboardScreen(),
         routes: {
           "signup": (context) => Signup(),
           "Login": (context) => Login(),

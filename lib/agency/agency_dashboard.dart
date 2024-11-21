@@ -29,7 +29,7 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
           IconButton(
               icon: const Icon(
                 Icons.logout,
-                color: Color.fromARGB(255, 255, 255, 255),
+                color: Color.fromARGB(255, 102, 18, 18),
               ), // Icône de déconnexion
               tooltip: 'Logout', // Texte d'info-bulle
               onPressed: () {

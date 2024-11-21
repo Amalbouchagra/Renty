@@ -46,7 +46,7 @@ class _HomeState extends State<Home> {
             SizedBox(height: 20),
             _buildCategoryButtons(),
             SizedBox(height: 20),
-            _buildSectionTitle("Available Cars"),
+            _buildSectionTitle(""),
             FutureBuilder<List<Car>>(
               future: _fetchCars(),
               builder: (context, snapshot) {
@@ -201,10 +201,10 @@ class _HomeState extends State<Home> {
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+        crossAxisCount: 2, // Deux cartes par ligne
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
-        childAspectRatio: 1.2,
+        childAspectRatio: 0.85, // Rapport largeur/hauteur compact
       ),
       itemCount: cars.length,
       itemBuilder: (context, index) {
@@ -216,10 +216,9 @@ class _HomeState extends State<Home> {
   Widget _buildCarCard(Car car) {
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.circular(15), // Coins arrondis plus prononcés
+        borderRadius: BorderRadius.circular(12),
       ),
-      elevation: 5, // Augmente l'ombre pour un effet flottant
+      elevation: 3,
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -230,49 +229,46 @@ class _HomeState extends State<Home> {
           );
         },
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
-              ),
-              child: Image.asset(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
                 car.image,
                 width: double.infinity,
-                height: 100, // Hauteur réduite
-                fit: BoxFit.cover, // Occupe l'espace sans distorsion
+                height: 150, // Hauteur réduite pour l'image
+                fit: BoxFit.cover,
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              padding: EdgeInsets.all(8.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     car.name,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.black,
+                      fontSize: 14,
+                      color: Colors.black87,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 6),
+                  SizedBox(height: 4),
                   Text(
-                    car.model, // Modèle ajouté pour plus d'informations
+                    car.model,
                     style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade600,
+                      fontSize: 12,
+                      color: Colors.grey,
                     ),
                   ),
                   SizedBox(height: 6),
                   Text(
                     'AED ${car.pricePerDay.toStringAsFixed(2)} / day',
                     style: TextStyle(
-                      color: Colors.redAccent,
-                      fontSize: 14,
+                      color: primaryColor,
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

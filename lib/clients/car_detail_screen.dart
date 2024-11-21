@@ -22,8 +22,8 @@ class CarDetailScreen extends StatelessWidget {
             // Affichage de l'image de la voiture
             Image.asset(
               car.image,
-              width: 800,
-              height: 300,
+              width: double.infinity,
+              height: 300, // Hauteur réduite
               fit: BoxFit.cover,
             ),
             SizedBox(height: 10),
