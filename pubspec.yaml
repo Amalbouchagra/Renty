@@ -45,6 +45,7 @@ dependencies:
   get: ^4.6.6
 
   image_picker: ^1.1.2
+  fl_chart: ^0.69.0
 
 dev_dependencies:
   flutter_test:
@@ -72,17 +73,40 @@ flutter:
   assets:
  
       - assets/logo.jpeg
-      - assets/car1.jpg
-      - assets/car2.jpg
       - assets/v1.jpg
       - assets/v2.png
-      - assets/v3.jpg
+      - assets/v3.jpg 
       - assets/v4.jpg
       - assets/v5.jpg
       - assets/v6.jpg
       - assets/v7.jpg
       - assets/v8.jpg
-      - tesla-model-3.jpg
+      - assets/tesla-model-3.jpg
+      - assets/audi-a5-sportback.jpg
+      - assets/rolls-royce-phantom.jpg
+      - assets/bentley-continental-gt.jpg
+      - assets/maserati-quattroporte.jpg
+      - assets/ferrari-488-gtb.jpg
+      - assets/lamborghini-huracan-evo.jpg
+      - assets/porsche-911-turbo-s.jpg
+      - assets/range-rover-vogue.jpg
+      - assets/bmw-x5-m50d.jpg
+      - assets/audi-q7-55-tfsi.jpg
+      - assets/bmw-z4-m40i.jpg
+      - assets/mercedes-benz-sl-63-amg.jpg
+      - assets/mercedes-benz-s-class.jpg
+      - assets/bmw-7-series-740i.jpg
+      - assets/audi-a8-l-60-tfsi.jpg
+      - assets/tesla-model-s-plaid.jpg
+      - assets/bmw-i4-m50.jpg
+      - assets/audi-e-tron-gt.jpg
+      - assets/mercedes-v-class.jpg
+      - assets/ford-transit.jpg
+      - assets/toyota-sienna-xse.jpg
+      - assets/toyota-corolla-hybrid.jpg
+      - assets/honda-civic-sport.jpg
+      - assets/ford-fiesta-titanium.jpg
+      
      
     
 

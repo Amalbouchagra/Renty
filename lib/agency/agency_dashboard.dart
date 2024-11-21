@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:renty/agency/AnalyticsScreen.dart';
 import 'package:renty/agency/CarsListScreen.dart';
+import 'package:renty/auth/logout.dart';
+import 'package:renty/clients/home.dart';
 import 'add_car_screen.dart';
 import 'add_car_screen.dart';
 import 'manage_reservations.dart';
@@ -24,17 +27,19 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
         elevation: 4,
         actions: [
           IconButton(
-            icon: const Icon(
-              Icons.logout,
-              color: Color.fromARGB(255, 255, 255, 255),
-            ), // Icône de déconnexion
-            tooltip: 'Logout', // Texte d'info-bulle
-            onPressed: () {
-              // Action à exécuter lors du clic sur l'icône
-              print('Logout pressed');
-              // Ajoutez ici la logique pour gérer la déconnexion
-            },
-          ),
+              icon: const Icon(
+                Icons.logout,
+                color: Color.fromARGB(255, 255, 255, 255),
+              ), // Icône de déconnexion
+              tooltip: 'Logout', // Texte d'info-bulle
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LogoutScreen()),
+                );
+                // Action à exécuter lors du clic sur l'icône
+                print('Logout pressed');
+              }),
         ],
       ),
       body: Padding(
@@ -132,14 +137,12 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
                     title: 'View Analytics',
                     subtitle: 'Track your agency performance',
                     onTap: () {
-                      // Appel à l'écran d'analytics
-                      // Décommentez cette ligne pour activer la navigation
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => AnalyticsScreen(),
-                      //   ),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AnalyticsScreen(),
+                        ),
+                      );
                     },
                   ),
                 ),

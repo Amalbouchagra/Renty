@@ -40,7 +40,7 @@ ButtonStyle kButtonStyle = ElevatedButton.styleFrom(
 // Couleurs de l'application
 const Color primaryColor = Color.fromARGB(255, 41, 114, 255);
 const Color backgroundColor = Colors.white;
-const Color greyColor = Colors.grey;
+const Color greyColor = Colors.white;
 
 // Styles de texte
 const TextStyle headingTextStyle = TextStyle(

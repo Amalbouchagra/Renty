@@ -95,7 +95,7 @@ class _UserSignupState extends State<UserSignup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("User Signup")),
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Form(
@@ -217,7 +217,7 @@ class _AgencySignupState extends State<AgencySignup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Agency Signup")),
+      backgroundColor: Color.fromARGB(255, 255, 255, 255),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Form(

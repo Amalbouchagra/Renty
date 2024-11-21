@@ -64,19 +64,13 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
   AppBar _buildAppBar() {
     return AppBar(
       elevation: 0,
-      backgroundColor: primaryColor,
-      title: Text(
-        "Renty",
-        style: TextStyle(
-            color: whiteColor, fontSize: 22, fontWeight: FontWeight.bold),
-      ),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
     );
   }
 
@@ -137,11 +131,11 @@ class _HomeState extends State<Home> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
-        color: whiteColor,
+        color: const Color.fromARGB(255, 255, 255, 255),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: const Color.fromARGB(31, 176, 212, 247),
+            color: const Color.fromARGB(31, 12, 12, 12),
             blurRadius: 10,
             offset: Offset(0, 5),
           ),
@@ -222,13 +216,10 @@ class _HomeState extends State<Home> {
   Widget _buildCarCard(Car car) {
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12), // Coins arrondis
+        borderRadius:
+            BorderRadius.circular(15), // Coins arrondis plus prononcés
       ),
-      elevation: 3,
-
-      margin: EdgeInsets.symmetric(
-          vertical: 8,
-          horizontal: 10), // Réduit l'espacement autour de la carte
+      elevation: 5, // Augmente l'ombre pour un effet flottant
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -241,42 +232,47 @@ class _HomeState extends State<Home> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image de la voiture
             ClipRRect(
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
               ),
               child: Image.asset(
                 car.image,
-                width: double.infinity, // Occupe toute la largeur
-                height: 100, // Hauteur de l'image réduite
-                fit: BoxFit.cover, // Couvre l'espace sans déformation
+                width: double.infinity,
+                height: 100, // Hauteur réduite
+                fit: BoxFit.cover, // Occupe l'espace sans distorsion
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(8.0), // Réduit l'espacement interne
+              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Nom de la voiture
                   Text(
                     car.name,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 14, // Taille de police réduite
+                      fontSize: 16,
                       color: Colors.black,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 4), // Espacement entre le nom et le prix
-                  // Prix de la voiture
+                  SizedBox(height: 6),
+                  Text(
+                    car.model, // Modèle ajouté pour plus d'informations
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  SizedBox(height: 6),
                   Text(
                     'AED ${car.pricePerDay.toStringAsFixed(2)} / day',
                     style: TextStyle(
                       color: Colors.redAccent,
-                      fontSize: 14, // Taille de police réduite
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -288,25 +284,6 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-}
-
-Widget _buildBottomNavigationBar() {
-  return BottomNavigationBar(
-    items: const [
-      BottomNavigationBarItem(
-        icon: Icon(Icons.home),
-        label: 'Home',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.search),
-        label: 'Search',
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.account_circle),
-        label: 'Profile',
-      ),
-    ],
-  );
 }
 
 class Car {
