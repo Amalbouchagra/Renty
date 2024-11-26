@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:renty/auth/login.dart';
-import 'package:renty/auth/signup.dart';
-import 'package:renty/clients/car_detail_screen.dart';
+import 'package:renty/home/car_detail_screen.dart';
 
 const Color primaryColor = Color.fromARGB(255, 41, 114, 255);
 const Color whiteColor = Colors.white;
@@ -14,12 +13,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  int _selectedIndex = 0; // Pour gérer l'onglet sélectionné
+  int _selectedIndex = 0;
+  String _selectedCategory = ''; // Catégorie sélectionnée
+  String _searchQuery = ''; // Mot-clé de recherche
 
   // Méthode pour naviguer entre les pages
   void _onItemTapped(int index) {
     if (index == 1) {
-      // Naviguer vers la page Login si "Start" est sélectionné
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Login()),
@@ -31,9 +31,22 @@ class _HomeState extends State<Home> {
     }
   }
 
-  // Récupérer les voitures depuis Firestore
+  // Méthode pour récupérer les voitures filtrées par catégorie ou nom
   Future<List<Car>> _fetchCars() async {
-    QuerySnapshot snapshot = await _firestore.collection('cars').get();
+    Query query = _firestore.collection('cars');
+
+    if (_selectedCategory.isNotEmpty) {
+      query = query.where('category', isEqualTo: _selectedCategory);
+    }
+
+    if (_searchQuery.isNotEmpty) {
+      query = query
+          .where('name', isGreaterThanOrEqualTo: _searchQuery)
+          .where('name', isLessThanOrEqualTo: '$_searchQuery\uf8ff');
+    }
+
+    QuerySnapshot snapshot = await query.get();
+
     return snapshot.docs.map((doc) {
       return Car(
         name: doc['name'],
@@ -49,7 +62,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteColor,
-      appBar: _buildAppBar(),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -98,15 +110,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  AppBar _buildAppBar() {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: whiteColor,
-      title: Text("", style: TextStyle(color: primaryColor)),
-      centerTitle: true,
-    );
-  }
-
   void _navigateTo(BuildContext context, Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
@@ -126,6 +129,11 @@ class _HomeState extends State<Home> {
         ],
       ),
       child: TextField(
+        onChanged: (value) {
+          setState(() {
+            _searchQuery = value.trim();
+          });
+        },
         decoration: InputDecoration(
           hintText: 'Search for a car',
           border: InputBorder.none,
@@ -152,11 +160,18 @@ class _HomeState extends State<Home> {
         children: categories
             .map((category) => Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                  child: Chip(
-                    backgroundColor: primaryColor,
-                    label: Text(
-                      category,
-                      style: TextStyle(color: whiteColor),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedCategory = category;
+                      });
+                    },
+                    child: Chip(
+                      backgroundColor: primaryColor,
+                      label: Text(
+                        category,
+                        style: TextStyle(color: whiteColor),
+                      ),
                     ),
                   ),
                 ))

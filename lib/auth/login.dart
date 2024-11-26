@@ -4,7 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:renty/admin/AdminDashboard.dart';
 import 'package:renty/agency/agency_dashboard.dart';
 import 'package:renty/auth/signup.dart';
-import 'package:renty/clients/profile_client.dart';
+
+import 'package:renty/clients/home_client.dart';
 
 import 'package:renty/styles/stylesauth.dart';
 
@@ -26,14 +27,14 @@ class _LoginPageState extends State<Login> {
       });
 
       try {
-        // Authenticate the user
+        // Authentification de l'utilisateur
         UserCredential userCredential =
             await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
 
-        // Fetch the user's role from Firestore
+        // Récupération des données utilisateur depuis Firestore
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('users')
             .doc(userCredential.user!.uid)
@@ -41,20 +42,32 @@ class _LoginPageState extends State<Login> {
 
         if (userDoc.exists) {
           String role = userDoc['role'];
+          String? status = userDoc.data().toString().contains('status')
+              ? userDoc['status']
+              : null;
 
-          // Navigate based on role
-          if (role == 'User') {
+          // Vérification du rôle
+          if (role == 'Agency') {
+            if (status == 'Accepted') {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => AgencyDashboardScreen()),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(
+                    'Your account is not approved yet. Please contact support.'),
+              ));
+              FirebaseAuth.instance.signOut();
+            }
+          } else if (role == 'User') {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => ClientDashboard(
-                        username: '',
+                  builder: (context) => HomeClient(
+                        userId: '',
                       )),
-            );
-          } else if (role == 'Agency') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => AgencyDashboardScreen()),
             );
           } else if (role == 'Admin') {
             Navigator.pushReplacement(
@@ -145,7 +158,7 @@ class _LoginPageState extends State<Login> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    // Handle password reset
+                    // Gestion du reset mot de passe
                   },
                   child: Text("Forgot Password?", style: linkTextStyle),
                 ),

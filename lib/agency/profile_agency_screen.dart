@@ -1,109 +1,325 @@
 import 'package:flutter/material.dart';
 
-class ProfileAgencyScreen extends StatefulWidget {
-  @override
-  _ProfileAgencyScreenState createState() => _ProfileAgencyScreenState();
+void main() {
+  runApp(MyApp());
 }
 
-class _ProfileAgencyScreenState extends State<ProfileAgencyScreen> {
-  final TextEditingController _agencyNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-
-  final _formKey = GlobalKey<FormState>();
-
+class MyApp extends StatelessWidget {
   @override
-  void dispose() {
-    _agencyNameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    super.dispose();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: AgencyDashboardScreen(),
+    );
   }
+}
 
-  void _saveProfile() {
-    if (_formKey.currentState!.validate()) {
-      // Logique pour sauvegarder les informations
-      print("Agency Name: ${_agencyNameController.text}");
-      print("Email: ${_emailController.text}");
-      print("Phone: ${_phoneController.text}");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Profile updated successfully!')),
-      );
-    }
+class AgencyDashboardScreen extends StatefulWidget {
+  @override
+  _AgencyDashboardScreenState createState() => _AgencyDashboardScreenState();
+}
+
+class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
+  // State variables
+  String userName = 'John Doe'; // Exemple de nom par défaut
+  String userRole = 'Admin'; // Exemple de rôle par défaut
+  int selectedOptionIndex = -1;
+
+  // Function to handle tap on options
+  void onOptionTap(int index) {
+    setState(() {
+      selectedOptionIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Agency Profile')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _agencyNameController,
-                decoration: InputDecoration(
-                  labelText: 'Agency Name',
-                  border: OutlineInputBorder(),
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          'Profile',
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
+      body: Column(
+        children: [
+          // Profile Header
+          Container(
+            padding: EdgeInsets.all(20),
+            color: Colors.white,
+            child: Row(
+              children: [
+                SizedBox(width: 15),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      userName,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      userRole,
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the agency name';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-                      .hasMatch(value)) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _phoneController,
-                decoration: InputDecoration(
-                  labelText: 'Phone Number',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
-                  }
-                  if (!RegExp(r"^\d{8,15}$").hasMatch(value)) {
-                    return 'Please enter a valid phone number';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _saveProfile,
-                child: Text('Save Profile'),
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
+          SizedBox(height: 10),
+
+          // List of options
+          Expanded(
+            child: ListView(
+              children: [
+                ProfileOption(
+                  icon: Icons.add_circle,
+                  title: 'Add New Car',
+                  subtitle: 'Expand your fleet easily',
+                  index: 0,
+                  isSelected: selectedOptionIndex == 0,
+                  onTap: (index) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddCarScreen()),
+                    );
+                  },
+                ),
+                ProfileOption(
+                  icon: Icons.directions_car,
+                  title: 'List Car',
+                  subtitle: 'Showcase your available cars',
+                  index: 1,
+                  isSelected: selectedOptionIndex == 1,
+                  onTap: (index) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CarListScreen()),
+                    );
+                  },
+                ),
+                ProfileOption(
+                  icon: Icons.manage_accounts,
+                  title: 'Manage Reservations',
+                  subtitle: 'Handle bookings efficiently',
+                  index: 2,
+                  isSelected: selectedOptionIndex == 2,
+                  onTap: (index) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ManageReservationsScreen()),
+                    );
+                  },
+                ),
+                ProfileOption(
+                  icon: Icons.payment,
+                  title: 'Payments',
+                  subtitle: 'Manage and track your payments',
+                  index: 3,
+                  isSelected: selectedOptionIndex == 3,
+                  onTap: (index) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PaymentsScreen()),
+                    );
+                  },
+                ),
+                ProfileOption(
+                  icon: Icons.analytics,
+                  title: 'View Analytics',
+                  subtitle: 'Track your agency performance',
+                  index: 4,
+                  isSelected: selectedOptionIndex == 4,
+                  onTap: (index) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AnalyticsScreen()),
+                    );
+                  },
+                ),
+                ProfileOption(
+                  icon: Icons.settings,
+                  title: 'Settings',
+                  subtitle: 'Adjust your preferences',
+                  index: 5,
+                  isSelected: selectedOptionIndex == 5,
+                  onTap: (index) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SettingsScreen()),
+                    );
+                  },
+                ),
+                ProfileOption(
+                  icon: Icons.group,
+                  title: 'Community',
+                  subtitle: 'Connect with others',
+                  index: 6,
+                  isSelected: selectedOptionIndex == 6,
+                  onTap: (index) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CommunityPage()),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+
+          // Footer
+          Container(
+            padding: EdgeInsets.all(20),
+            color: Colors.blue[50],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.headset_mic, color: Colors.blue),
+                SizedBox(width: 10),
+                Text(
+                  'Feel Free to Ask, We\'re Ready to Help',
+                  style: TextStyle(color: Colors.blue),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notifications',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ProfileOption extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final int index;
+  final bool isSelected;
+  final Function(int) onTap;
+
+  ProfileOption({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.index,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon, color: isSelected ? Colors.blue : Colors.grey),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: isSelected ? Colors.blue : Colors.black,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
+      subtitle: Text(subtitle),
+      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+      onTap: () {
+        onTap(index);
+      },
+    );
+  }
+}
+
+// Placeholder screens for navigation
+class AddCarScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Add New Car')),
+      body: Center(child: Text('Add Car Screen')),
+    );
+  }
+}
+
+class CarListScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Car List')),
+      body: Center(child: Text('Car List Screen')),
+    );
+  }
+}
+
+class ManageReservationsScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Manage Reservations')),
+      body: Center(child: Text('Manage Reservations Screen')),
+    );
+  }
+}
+
+class PaymentsScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Payments')),
+      body: Center(child: Text('Payments Screen')),
+    );
+  }
+}
+
+class AnalyticsScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Analytics')),
+      body: Center(child: Text('Analytics Screen')),
+    );
+  }
+}
+
+class SettingsScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Settings')),
+      body: Center(child: Text('Settings Screen')),
+    );
+  }
+}
+
+class CommunityPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Community')),
+      body: Center(child: Text('Community Page')),
     );
   }
 }

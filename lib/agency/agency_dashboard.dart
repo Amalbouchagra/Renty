@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:renty/agency/AnalyticsScreen.dart';
 import 'package:renty/agency/CarsListScreen.dart';
-import 'package:renty/auth/logout.dart';
+import 'package:renty/agency/add_car_screen.dart';
+import 'package:renty/agency/manage_reservations.dart';
 
-import 'add_car_screen.dart';
+void main() {
+  runApp(MyApp());
+}
 
-import 'manage_reservations.dart';
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: AgencyDashboardScreen(),
+    );
+  }
+}
 
 class AgencyDashboardScreen extends StatefulWidget {
   @override
@@ -13,206 +24,218 @@ class AgencyDashboardScreen extends StatefulWidget {
 }
 
 class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
+  // State variables
+  String userName = 'John Doe'; // Exemple de nom par défaut
+  String userRole = 'Admin'; // Exemple de rôle par défaut
+  int selectedOptionIndex = -1;
+
+  // Function to handle tap on options
+  void onOptionTap(int index) {
+    setState(() {
+      selectedOptionIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text('Agency Dashboard'),
-        backgroundColor: const Color.fromARGB(255, 41, 114, 255),
-        titleTextStyle: TextStyle(
-          color: Colors.white, // Couleur du texte (ici blanc)
-          fontSize: 22, // Taille du texte
-          fontWeight: FontWeight.bold, // Poids du texte
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          'Profile',
+          style: TextStyle(color: Colors.black),
         ),
-        elevation: 4,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.logout,
-              color: Color.fromARGB(255, 255, 255, 255),
+        iconTheme: IconThemeData(color: Colors.black),
+      ),
+      body: Column(
+        children: [
+          // Profile Header
+          Container(
+            padding: EdgeInsets.all(20),
+            color: Colors.white,
+            child: Row(
+              children: [
+                SizedBox(width: 15),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      userName,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      userRole,
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LogoutScreen()),
-              );
-            },
+          ),
+          SizedBox(height: 10),
+
+          // List of options
+          Expanded(
+            child: ListView(
+              children: [
+                ProfileOption(
+                  icon: Icons.add_circle,
+                  title: 'Add New Car',
+                  subtitle: 'Expand your fleet easily',
+                  index: 0,
+                  isSelected: selectedOptionIndex == 0,
+                  onTap: (index) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddCarScreen()),
+                    );
+                  },
+                ),
+                ProfileOption(
+                  icon: Icons.directions_car,
+                  title: 'List Car',
+                  subtitle: 'Showcase your available cars',
+                  index: 1,
+                  isSelected: selectedOptionIndex == 1,
+                  onTap: (index) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CarListScreen()),
+                    );
+                  },
+                ),
+                ProfileOption(
+                  icon: Icons.manage_accounts,
+                  title: 'Manage Reservations',
+                  subtitle: 'Handle bookings efficiently',
+                  index: 2,
+                  isSelected: selectedOptionIndex == 2,
+                  onTap: (index) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ManageReservationsScreen()),
+                    );
+                  },
+                ),
+                ProfileOption(
+                  icon: Icons.payment,
+                  title: 'Payments',
+                  subtitle: 'Manage and track your payments',
+                  index: 3,
+                  isSelected: selectedOptionIndex == 3,
+                  onTap: (index) {
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => PaymentsScreen()),
+                    // );
+                  },
+                ),
+                ProfileOption(
+                  icon: Icons.analytics,
+                  title: 'View Analytics',
+                  subtitle: 'Track your agency performance',
+                  index: 4,
+                  isSelected: selectedOptionIndex == 4,
+                  onTap: (index) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AnalyticsScreen()),
+                    );
+                  },
+                ),
+                ProfileOption(
+                  icon: Icons.settings,
+                  title: 'Settings',
+                  subtitle: 'Adjust your preferences',
+                  index: 5,
+                  isSelected: selectedOptionIndex == 5,
+                  onTap: (index) {
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => SettingsScreen()),
+                    // );
+                  },
+                ),
+                ProfileOption(
+                  icon: Icons.group,
+                  title: 'Community',
+                  subtitle: 'Connect with others',
+                  index: 6,
+                  isSelected: selectedOptionIndex == 6,
+                  onTap: (index) {
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) => CommunityPage()),
+                    // );
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Welcome to Your Dashboard',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: _buildDashboardCard(
-                    icon: Icons.add_circle,
-                    title: 'Add New Car',
-                    subtitle: 'Expand your fleet easily',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AddCarScreen()),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildDashboardCard(
-                    icon: Icons.add_circle,
-                    title: 'List Car',
-                    subtitle: 'Expand your fleet easily',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              CarListScreen(), // Adjusted naming
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildDashboardCard(
-                    icon: Icons.manage_accounts,
-                    title: 'Manage Reservations',
-                    subtitle: 'Handle bookings efficiently',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ManageReservationsScreen()),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // Première carte: Paiement
-                Expanded(
-                  child: _buildDashboardCard(
-                    icon: Icons.payment, // Icône de paiement
-                    title: 'Payments',
-                    subtitle: 'Manage and track your payments',
-                    onTap: () {
-                      // Appel à l'écran de paiement
-                      // Décommentez cette ligne pour activer la navigation
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => PaymentScreen(),
-                      //   ),
-                      // );
-                    },
-                  ),
-                ),
-                // Espace entre les cartes
-                const SizedBox(width: 16),
-                // Deuxième carte: Analytics
-                Expanded(
-                  child: _buildDashboardCard(
-                    icon: Icons.analytics, // Icône d'analyse
-                    title: 'View Analytics',
-                    subtitle: 'Track your agency performance',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AnalyticsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildDashboardCard(
-                    icon: Icons.settings,
-                    title: 'Settings',
-                    subtitle: 'Adjust your preferences',
-                    onTap: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //       builder: (context) => SettingsScreen()),
-                      // );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   items: [
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.home),
+      //       label: 'Home',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.notifications),
+      //       label: 'Notifications',
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: Icon(Icons.person),
+      //       label: 'Profile',
+      //     ),
+      //   ],
+      // ),
     );
   }
+}
 
-  Widget _buildDashboardCard({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      elevation: 5,
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          constraints: const BoxConstraints(
-            minWidth: 180,
-            maxWidth: 200,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon,
-                  size: 40, color: const Color.fromARGB(255, 41, 114, 255)),
-              const SizedBox(height: 10),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 5),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+class ProfileOption extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final int index;
+  final bool isSelected;
+  final Function(int) onTap;
+
+  ProfileOption({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.index,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon, color: isSelected ? Colors.blue : Colors.grey),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: isSelected ? Colors.blue : Colors.black,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
+      subtitle: Text(subtitle),
+      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+      onTap: () {
+        onTap(index);
+      },
     );
   }
 }

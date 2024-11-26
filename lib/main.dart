@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:renty/agency/add_car_screen.dart';
-import 'clients/home.dart';
+import 'home/home.dart';
 
 import 'package:renty/agency/agency_dashboard.dart';
 

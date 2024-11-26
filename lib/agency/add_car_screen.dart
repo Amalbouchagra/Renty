@@ -23,6 +23,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
   final TextEditingController _imageController = TextEditingController();
   final TextEditingController _conditionsController = TextEditingController();
   final TextEditingController _optionsController = TextEditingController();
+  final TextEditingController _categoryController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -56,6 +57,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
           'addedAt': Timestamp.now(),
           'conditions': _conditionsController.text.trim(),
           'options': _optionsController.text.trim(),
+          'category': _categoryController.text.trim(),
         });
 
         Navigator.of(context).pop(); // Ferme l'indicateur de chargement
@@ -81,6 +83,7 @@ class _AddCarScreenState extends State<AddCarScreen> {
         _imageController.clear();
         _conditionsController.clear();
         _optionsController.clear();
+        _categoryController.clear();
       } catch (e) {
         Navigator.of(context)
             .pop(); // Ferme l'indicateur de chargement en cas d'erreur
@@ -272,6 +275,12 @@ class _AddCarScreenState extends State<AddCarScreen> {
                   controller: _optionsController,
                   decoration: InputDecoration(
                       labelText: 'Options (e.g., GPS, Seat Cover)'),
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: _categoryController,
+                  decoration:
+                      InputDecoration(labelText: 'Please enter category'),
                 ),
                 SizedBox(height: 30),
                 ElevatedButton(
