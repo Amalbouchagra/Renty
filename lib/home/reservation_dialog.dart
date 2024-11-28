@@ -19,80 +19,148 @@ class ReservationDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.0),
       ),
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(20.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Reserve',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text('Car: ${car.name} (${car.model})'),
-            Text('Price per day: AED ${car.pricePerDay.toStringAsFixed(2)}'),
-            SizedBox(height: 10),
-            Text('Enter your phone number:'),
-            TextFormField(
-              controller: phoneController,
-              decoration: InputDecoration(
-                labelText: '+216 | Phone number',
-                border: OutlineInputBorder(),
+              'Reserve Car',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
+            ),
+            SizedBox(height: 16),
+            // Display car details
+            _buildCarInfo(),
+            SizedBox(height: 20),
+            // Phone number input
+            _buildTextField(
+              controller: phoneController,
+              label: '+216 | Phone number',
               keyboardType: TextInputType.phone,
             ),
-            SizedBox(height: 10),
-            Text('Select start date:'),
-            TextFormField(
-              controller: startDateController,
-              decoration: InputDecoration(
-                labelText: 'Start Date',
-                border: OutlineInputBorder(),
-              ),
-              onTap: () async {
-                FocusScope.of(context).requestFocus(FocusNode());
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2101),
-                );
-                if (pickedDate != null) {
-                  startDateController.text =
-                      DateFormat('yyyy-MM-dd').format(pickedDate);
-                }
-              },
-              readOnly: true,
-            ),
-            SizedBox(height: 10),
-            Text('Enter duration in days:'),
-            TextFormField(
+            SizedBox(height: 16),
+            // Start date input
+            _buildDateInput(context, startDateController),
+            SizedBox(height: 16),
+            // Duration input
+            _buildTextField(
               controller: durationController,
-              decoration: InputDecoration(
-                labelText: 'Duration (Days)',
-                border: OutlineInputBorder(),
-              ),
+              label: 'Duration (Days)',
               keyboardType: TextInputType.number,
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                _submitReservation(
-                  context,
-                  car,
-                  phoneController.text.trim(),
-                  startDateController.text.trim(),
-                  durationController.text.trim(),
-                );
-              },
-              child: Text('Submit'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromARGB(255, 41, 114, 255),
-                textStyle: TextStyle(fontSize: 16),
-              ),
-            ),
+            SizedBox(height: 24),
+            // Submit Button
+            _buildSubmitButton(context, phoneController, startDateController,
+                durationController),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildCarInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Car: ${car.name} (${car.model})',
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[800]),
+        ),
+        Text(
+          'Price per day: AED ${car.pricePerDay.toStringAsFixed(2)}',
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.green[600]),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required TextInputType keyboardType,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color.fromARGB(255, 41, 114, 255)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      ),
+      keyboardType: keyboardType,
+    );
+  }
+
+  Widget _buildDateInput(
+      BuildContext context, TextEditingController startDateController) {
+    return GestureDetector(
+      onTap: () async {
+        FocusScope.of(context).requestFocus(FocusNode());
+        DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(2000),
+          lastDate: DateTime(2101),
+        );
+        if (pickedDate != null) {
+          startDateController.text =
+              DateFormat('yyyy-MM-dd').format(pickedDate);
+        }
+      },
+      child: AbsorbPointer(
+        child: TextFormField(
+          controller: startDateController,
+          decoration: InputDecoration(
+            labelText: 'Start Date',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubmitButton(
+    BuildContext context,
+    TextEditingController phoneController,
+    TextEditingController startDateController,
+    TextEditingController durationController,
+  ) {
+    return ElevatedButton(
+      onPressed: () {
+        _submitReservation(
+          context,
+          car,
+          phoneController.text.trim(),
+          startDateController.text.trim(),
+          durationController.text.trim(),
+        );
+      },
+      child: Text(
+        'Submit Reservation',
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Color.fromARGB(255, 41, 114, 255),
+        padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 5,
+        shadowColor: Color.fromARGB(255, 41, 114, 255).withOpacity(0.3),
       ),
     );
   }
@@ -113,7 +181,7 @@ class ReservationDialog extends StatelessWidget {
       return;
     }
 
-    // Envoyer la réservation à Firestore
+    // Send the reservation to Firestore
     FirebaseFirestore.instance.collection('reservations').add({
       'carName': car.name,
       'carModel': car.model,

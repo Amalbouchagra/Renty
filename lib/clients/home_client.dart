@@ -58,6 +58,11 @@ class _HomeClientState extends State<HomeClient> {
 
   Future<void> _fetchFavorites() async {
     try {
+      if (widget.userId.isEmpty) {
+        print("Error: userId is empty.");
+        return;
+      }
+
       // Récupérer les voitures favorites de la sous-collection 'favorites' de l'utilisateur
       QuerySnapshot snapshot = await _firestore
           .collection('users')
@@ -76,7 +81,12 @@ class _HomeClientState extends State<HomeClient> {
   Future<void> _toggleFavorite(String carId) async {
     if (carId.isEmpty) {
       print("Car ID is empty. Cannot toggle favorite.");
-      return;
+      return; // Retourne immédiatement si carId est vide
+    }
+
+    if (widget.userId.isEmpty) {
+      print("User ID is empty. Cannot toggle favorite.");
+      return; // Retourne immédiatement si userId est vide
     }
 
     try {
@@ -114,7 +124,11 @@ class _HomeClientState extends State<HomeClient> {
   @override
   void initState() {
     super.initState();
-    _fetchFavorites();
+    if (widget.userId.isNotEmpty) {
+      _fetchFavorites();
+    } else {
+      print("Error: userId is empty at initialization.");
+    }
   }
 
   @override
@@ -122,6 +136,7 @@ class _HomeClientState extends State<HomeClient> {
     return Scaffold(
       backgroundColor: whiteColor,
       body: SingleChildScrollView(
+        // Ajout de SingleChildScrollView pour permettre le défilement
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,7 +278,7 @@ class _HomeClientState extends State<HomeClient> {
             MaterialPageRoute(
               builder: (context) => CarDetailClient(
                 car: car,
-                carId: '',
+                carId: car.carId, // Utilisez le bon identifiant
               ),
             ),
           );
@@ -325,7 +340,6 @@ class Car {
   final String model;
   final String image;
   final double pricePerDay;
-  final String category;
 
   Car({
     required this.carId,
@@ -333,18 +347,15 @@ class Car {
     required this.model,
     required this.image,
     required this.pricePerDay,
-    required this.category,
   });
 
   factory Car.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
     return Car(
       carId: doc.id,
-      name: data['name'] ?? '',
-      model: data['model'] ?? '',
-      image: data['image'] ?? '',
-      pricePerDay: (data['pricePerDay'] ?? 0).toDouble(),
-      category: data['category'] ?? '',
+      name: doc['name'],
+      model: doc['model'],
+      image: doc['image'],
+      pricePerDay: doc['pricePerDay'].toDouble(),
     );
   }
 }

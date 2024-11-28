@@ -9,6 +9,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primaryColor: Colors.blue,
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(color: Colors.black87),
+          bodyMedium: TextStyle(color: Colors.grey[700]),
+        ),
+      ),
       home: AgencyDashboardScreen(),
     );
   }
@@ -20,12 +27,10 @@ class AgencyDashboardScreen extends StatefulWidget {
 }
 
 class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
-  // State variables
-  String userName = 'John Doe'; // Exemple de nom par défaut
-  String userRole = 'Admin'; // Exemple de rôle par défaut
+  String userName = 'John Doe';
+  String userRole = 'Admin';
   int selectedOptionIndex = -1;
 
-  // Function to handle tap on options
   void onOptionTap(int index) {
     setState(() {
       selectedOptionIndex = index;
@@ -48,27 +53,35 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
       ),
       body: Column(
         children: [
-          // Profile Header
+          // Profile Header with Avatar and Info
           Container(
             padding: EdgeInsets.all(20),
             color: Colors.white,
             child: Row(
               children: [
-                SizedBox(width: 15),
+                CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.blueAccent,
+                  child: Text(
+                    userName[0], // Initial of the user
+                    style: TextStyle(color: Colors.white, fontSize: 28),
+                  ),
+                ),
+                SizedBox(width: 20),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       userName,
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(height: 5),
                     Text(
                       userRole,
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(color: Colors.grey[600]),
                     ),
                   ],
                 ),
@@ -77,7 +90,7 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
           ),
           SizedBox(height: 10),
 
-          // List of options
+          // List of Options
           Expanded(
             child: ListView(
               children: [
@@ -180,7 +193,7 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
 
           // Footer
           Container(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(15),
             color: Colors.blue[50],
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -189,7 +202,8 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
                 SizedBox(width: 10),
                 Text(
                   'Feel Free to Ask, We\'re Ready to Help',
-                  style: TextStyle(color: Colors.blue),
+                  style: TextStyle(
+                      color: Colors.blue, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -197,6 +211,8 @@ class _AgencyDashboardScreenState extends State<AgencyDashboardScreen> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -235,20 +251,24 @@ class ProfileOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon, color: isSelected ? Colors.blue : Colors.grey),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: isSelected ? Colors.blue : Colors.black,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      elevation: 2,
+      child: ListTile(
+        leading:
+            Icon(icon, color: isSelected ? Colors.blueAccent : Colors.grey),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: isSelected ? Colors.blueAccent : Colors.black,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
         ),
+        subtitle: Text(subtitle, style: TextStyle(color: Colors.grey[600])),
+        trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+        onTap: () => onTap(index),
       ),
-      subtitle: Text(subtitle),
-      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey),
-      onTap: () {
-        onTap(index);
-      },
     );
   }
 }

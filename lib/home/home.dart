@@ -14,10 +14,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   int _selectedIndex = 0;
-  String _selectedCategory = ''; // Catégorie sélectionnée
-  String _searchQuery = ''; // Mot-clé de recherche
+  String _selectedCategory = '';
+  String _searchQuery = '';
 
-  // Méthode pour naviguer entre les pages
   void _onItemTapped(int index) {
     if (index == 1) {
       Navigator.push(
@@ -31,7 +30,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-  // Méthode pour récupérer les voitures filtrées par catégorie ou nom
   Future<List<Car>> _fetchCars() async {
     Query query = _firestore.collection('cars');
 
@@ -61,7 +59,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: whiteColor,
+      backgroundColor: Color(0xFFF7F7F7), // Subtle background color
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -73,7 +71,10 @@ class _HomeState extends State<Home> {
             SizedBox(height: 20),
             Text(
               "Available Cars",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: primaryColor),
             ),
             SizedBox(height: 10),
             FutureBuilder<List<Car>>(
@@ -96,6 +97,9 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        selectedItemColor: primaryColor,
+        unselectedItemColor: Colors.grey,
+        showSelectedLabels: true,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -110,10 +114,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _navigateTo(BuildContext context, Widget page) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
-  }
-
   Widget _buildSearchBox() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -123,8 +123,8 @@ class _HomeState extends State<Home> {
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
-            blurRadius: 10,
-            offset: Offset(0, 5),
+            blurRadius: 8,
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -166,11 +166,29 @@ class _HomeState extends State<Home> {
                         _selectedCategory = category;
                       });
                     },
-                    child: Chip(
-                      backgroundColor: primaryColor,
-                      label: Text(
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: _selectedCategory == category
+                            ? primaryColor
+                            : Colors.grey[200],
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            blurRadius: 6,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Text(
                         category,
-                        style: TextStyle(color: whiteColor),
+                        style: TextStyle(
+                          color: _selectedCategory == category
+                              ? whiteColor
+                              : Colors.black,
+                        ),
                       ),
                     ),
                   ),
@@ -186,8 +204,8 @@ class _HomeState extends State<Home> {
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
         childAspectRatio: 0.85,
       ),
       itemCount: cars.length,
@@ -202,7 +220,7 @@ class _HomeState extends State<Home> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      elevation: 3,
+      elevation: 5,
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -218,7 +236,7 @@ class _HomeState extends State<Home> {
               borderRadius: BorderRadius.circular(12),
               child: Image.network(
                 car.image,
-                height: 100,
+                height: 120,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
@@ -229,14 +247,17 @@ class _HomeState extends State<Home> {
                 children: [
                   Text(
                     car.name,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   SizedBox(height: 4),
                   Text(car.model, style: TextStyle(color: Colors.grey)),
                   SizedBox(height: 6),
                   Text(
                     'AED ${car.pricePerDay.toStringAsFixed(2)} / day',
-                    style: TextStyle(color: primaryColor),
+                    style: TextStyle(
+                      color: primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
