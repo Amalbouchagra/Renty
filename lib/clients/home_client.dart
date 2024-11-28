@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:renty/clients/ReservationsList.dart';
 
+import 'package:renty/clients/profile_client.dart';
 import 'car_detail_client.dart';
 
 const Color primaryColor = Color.fromARGB(255, 41, 114, 255);
@@ -28,11 +27,7 @@ class _HomeClientState extends State<HomeClient> {
     if (index == 1) {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => ReservationsList(
-            clientId: FirebaseAuth.instance.currentUser?.uid ?? "",
-          ),
-        ),
+        MaterialPageRoute(builder: (context) => ProfileClient()),
       );
     } else {
       setState(() => _selectedIndex = index);
@@ -63,34 +58,54 @@ class _HomeClientState extends State<HomeClient> {
 
   Future<void> _fetchFavorites() async {
     try {
-      DocumentSnapshot userSnapshot =
-          await _firestore.collection('users').doc(widget.userId).get();
+      // Récupérer les voitures favorites de la sous-collection 'favorites' de l'utilisateur
+      QuerySnapshot snapshot = await _firestore
+          .collection('users')
+          .doc(widget.userId)
+          .collection('favorites')
+          .get();
 
-      if (userSnapshot.exists) {
-        setState(() {
-          final data = userSnapshot.data() as Map<String, dynamic>?;
-          _favoriteCars =
-              List<String>.from(data?['favorites'] ?? []); // Cast explicite
-        });
-      }
+      setState(() {
+        _favoriteCars = snapshot.docs.map((doc) => doc.id).toList();
+      });
     } catch (e) {
       print("Error fetching favorites: $e");
     }
   }
 
   Future<void> _toggleFavorite(String carId) async {
+    if (carId.isEmpty) {
+      print("Car ID is empty. Cannot toggle favorite.");
+      return;
+    }
+
     try {
+      final isFavorite = _favoriteCars.contains(carId);
+
       setState(() {
-        if (_favoriteCars.contains(carId)) {
+        if (isFavorite) {
           _favoriteCars.remove(carId);
         } else {
           _favoriteCars.add(carId);
         }
       });
 
-      await _firestore.collection('users').doc(widget.userId).update({
-        'favorites': _favoriteCars,
-      });
+      // Ajouter ou supprimer la voiture de la sous-collection 'favorites'
+      if (isFavorite) {
+        await _firestore
+            .collection('users')
+            .doc(widget.userId)
+            .collection('favorites')
+            .doc(carId)
+            .delete();
+      } else {
+        await _firestore
+            .collection('users')
+            .doc(widget.userId)
+            .collection('favorites')
+            .doc(carId)
+            .set({}); // Document vide, représente le favori
+      }
     } catch (e) {
       print("Error toggling favorite: $e");
     }
@@ -321,13 +336,12 @@ class Car {
     required this.category,
   });
 
-  /// Factory method to create a Car instance from Firestore data
   factory Car.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return Car(
       carId: doc.id,
-      name: data['name'] ?? 'Unknown',
-      model: data['model'] ?? 'Unknown',
+      name: data['name'] ?? '',
+      model: data['model'] ?? '',
       image: data['image'] ?? '',
       pricePerDay: (data['pricePerDay'] ?? 0).toDouble(),
       category: data['category'] ?? '',

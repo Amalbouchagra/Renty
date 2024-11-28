@@ -1,7 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:renty/clients/car_detail_client.dart';
-import 'package:renty/clients/home_client.dart'; // Importez la classe Car
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:renty/clients/home_client.dart';
 
 class FavoritesPage extends StatefulWidget {
   final String userId;
@@ -14,80 +13,60 @@ class FavoritesPage extends StatefulWidget {
 
 class _FavoritesPageState extends State<FavoritesPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  List<String> _favoriteCarIds = []; // Liste des IDs des voitures favorites
-
-  Future<List<Car>> _fetchFavoriteCars() async {
-    List<Car> favoriteCars = [];
-    try {
-      DocumentSnapshot userSnapshot =
-          await _firestore.collection('users').doc(widget.userId).get();
-
-      if (userSnapshot.exists) {
-        final data = userSnapshot.data() as Map<String, dynamic>?;
-        List<String> favoriteIds = List<String>.from(data?['favorites'] ?? []);
-
-        for (var carId in favoriteIds) {
-          DocumentSnapshot carSnapshot =
-              await _firestore.collection('cars').doc(carId).get();
-          if (carSnapshot.exists) {
-            final car = Car.fromFirestore(carSnapshot);
-            favoriteCars.add(car);
-          }
-        }
-      }
-    } catch (e) {
-      print("Error fetching favorite cars: $e");
-    }
-    return favoriteCars;
-  }
+  List<Car> _favoriteCars = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchFavoriteCars(); // Récupérer les voitures favorites au démarrage
+    _fetchFavoriteCars();
+  }
+
+  Future<void> _fetchFavoriteCars() async {
+    try {
+      // Récupérer les documents dans la sous-collection 'favorites'
+      QuerySnapshot snapshot = await _firestore
+          .collection('users')
+          .doc(widget.userId)
+          .collection('favorites')
+          .get();
+
+      List<String> favoriteCarIds = snapshot.docs
+          .map((doc) => doc.id) // L'ID du document est l'ID de la voiture
+          .toList();
+
+      if (favoriteCarIds.isNotEmpty) {
+        // Charger les détails des voitures favorites
+        QuerySnapshot carSnapshot = await _firestore
+            .collection('cars')
+            .where(FieldPath.documentId, whereIn: favoriteCarIds)
+            .get();
+
+        setState(() {
+          _favoriteCars =
+              carSnapshot.docs.map((doc) => Car.fromFirestore(doc)).toList();
+        });
+      } else {
+        setState(() {
+          _favoriteCars = [];
+        });
+      }
+    } catch (e) {
+      print("Error fetching favorite cars: $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Favorites'),
-        backgroundColor: const Color.fromARGB(255, 41, 114, 255),
-      ),
-      body: FutureBuilder<List<Car>>(
-        future: _fetchFavoriteCars(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No favorite cars.'));
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                Car car = snapshot.data![index];
-                return ListTile(
-                  title: Text(car.name),
-                  subtitle: Text(car.model),
-                  leading: Image.network(car.image,
-                      width: 50, height: 50, fit: BoxFit.cover),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CarDetailClient(
-                          car: car,
-                          carId: car.carId,
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            );
-          }
+      appBar: AppBar(title: const Text('Favorites')),
+      body: ListView.builder(
+        itemCount: _favoriteCars.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: Image.network(_favoriteCars[index].image),
+            title: Text(_favoriteCars[index].name),
+            subtitle: Text(_favoriteCars[index].model),
+          );
         },
       ),
     );

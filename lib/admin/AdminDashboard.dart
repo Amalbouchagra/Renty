@@ -9,9 +9,9 @@ class AdminDashboard extends StatefulWidget {
 class _AdminDashboardState extends State<AdminDashboard> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Fonction pour mettre à jour le statut de l'agence
   Future<void> updateAgencyStatus(String agencyId, String status) async {
     try {
+      // Mettre à jour le statut de l'agence dans Firestore
       await _firestore.collection('users').doc(agencyId).update({
         'status': status,
       });
